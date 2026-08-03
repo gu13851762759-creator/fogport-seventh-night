@@ -1,0 +1,29 @@
+/* Final display scale: the game opens as a deliberately compact desk, not a full-window poster. */
+@media (min-width:1051px){
+  .desk{width:min(780px,88vw)!important;}
+  .screen{min-height:clamp(340px,50dvh,440px)!important;}
+  .crt{border-width:10px;padding:12px 15px 9px;}
+  .brand{font-size:9px;padding-bottom:8px;}
+  .window-bar{height:25px;font-size:12px;padding:4px 7px;}
+  .screen header{padding:10px 3px 8px;font-size:13px;}
+  #scene-title{font-size:15px;}
+  #scene-body{font-size:13px!important;line-height:1.65!important;padding:14px 3px 10px!important;}
+  .choice{width:min(520px,100%);font-size:12px;margin:6px 0;padding:6px 9px;}
+  .computer-base{height:82px!important;}.floppy{top:17px;transform:scale(.78);}.drive{top:46px;transform:scale(.78);}.vent{bottom:12px;height:30px;transform:scale(.78);transform-origin:left bottom;}
+  .keyboard{width:91%;min-height:126px!important;padding:10px 16px 12px;}.keyboard .key-row i{min-height:20px;font-size:10px;}.keyboard .function-row i{min-height:17px;font-size:8px;}
+  .mouse{transform:scale(.72);transform-origin:bottom right;right:-18px;bottom:-24px;}
+  .id-card{width:min(390px,100%);font-size:12px;}.id-card__photo{width:65px;height:80px;}.story-card{max-width:470px;margin:13px auto;padding:17px 20px;}.chapter-card{margin:55px auto 34px;}.chapter-card h1{font-size:36px;}.chapter-card h2{font-size:21px;}
+}
+
+@media (min-width:651px) and (max-width:1050px){
+  .desk{width:min(760px,94vw)!important;}
+  .screen{height:clamp(330px,51dvh,470px)!important;}
+  #scene-body{font-size:13px!important;}.choice{width:min(510px,100%);font-size:12px;}
+  .computer-base{height:72px!important;}.keyboard{min-height:116px!important;}
+}
+
+@media (max-width:650px){
+  .desk{grid-template-rows:minmax(0,1fr) 94px!important;}
+  .keyboard{height:94px!important;min-height:94px!important;}.keyboard .key-row i{min-height:19px!important;font-size:8px!important;}
+  #scene-body{font-size:13px!important;}.choice{font-size:12px!important;padding:6px 7px!important;}
+}
