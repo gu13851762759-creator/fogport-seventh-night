@@ -5,7 +5,7 @@ const playChoiceClick=()=>{const audio=$('#choice-sfx');audio.currentTime=0;audi
 const playOne=id=>{const audio=$(id);audio.currentTime=0;audio.play().catch(()=>{})};
 const chapterTransition=()=>{playOne('#chapter-sfx');S.classList.add('chapter-glitch');setTimeout(()=>S.classList.remove('chapter-glitch'),1150)};
 const rewindTransition=done=>{playOne('#rewind-sfx');S.classList.add('is-glitch');$('#glitch-overlay').classList.add('active');setTimeout(()=>{S.classList.remove('is-glitch');$('#glitch-overlay').classList.remove('active');done()},760)};
-const pop=(text,type='warning',onOk=()=>{})=>{playCue(type);$('.pixel-modal').className='pixel-modal '+(type==='system'?'modal-system':type);$('#modal-copy').innerHTML='<span class="pixel-icon">'+(type==='error'?'✖':'⚠')+'</span>'+text.replace(/\n/g,'<br>');modalAction=onOk;$('#modal-ok').textContent='收到';$('#modal-cancel').classList.add('hidden');$('#system-modal').classList.remove('hidden')};
+const pop=(text,type='warning',onOk=()=>{})=>{playCue(type);$('.pixel-modal').className='pixel-modal '+(type==='system'?'modal-system':type);const icon=type==='error'?'✖':type==='archive'?'✓':type==='system'?'✦':'⚠';$('#modal-copy').innerHTML='<span class="pixel-icon">'+icon+'</span>'+text.replace(/\n/g,'<br>');modalAction=onOk;$('#modal-ok').textContent='收到';$('#modal-cancel').classList.add('hidden');$('#system-modal').classList.remove('hidden')};
 let s=JSON.parse(localStorage.getItem(KEY)||'null')||{scene:'boot',powered:false,name:'',wish:'',persona:'冷静',clues:[],seen:[]};
 const data={note:['林越的便笺','校门口那个孩子……她一直在等。'],rewrite:['被淡化的报道','“港区小学女生意外身亡”被改成“雨夜安全提醒”。'],program:['撕坏的节目单','……满 / 邱圆'],boss:['总编的电话','“明早之前，别让那件事再上版面。”'],doll:['湿透的玩偶','衣领里夹着一片节目单。'],mark:['雨夜标记','一段无法阅读的涂鸦。'],photo:['被裁掉人物的合照','她和邱圆约好一起上台。']};
 const music=$('#ambience'),rainAudio=$('#rain');
@@ -13,34 +13,15 @@ const fadeAudio=(audio,target)=>{clearInterval(audio._fogportFade);audio._fogpor
 const setSoundscape=mode=>{const storm=mode==='storm';fadeAudio(music,storm?.08:.30);fadeAudio(rainAudio,storm?.62:.12);if(s.powered){music.play().catch(()=>{});rainAudio.play().catch(()=>{})}};
 const save=()=>localStorage.setItem(KEY,JSON.stringify(s)),go=x=>{s.scene=x;if(['chapter1','arrival','desk','rain'].includes(x))setSoundscape('storm');if(/^chapter\d+$/.test(x))chapterTransition();save();render()},btn=a=>{C.innerHTML='';a.forEach(([x,f])=>{let b=document.createElement('button');b.className='choice';b.textContent=x;b.onclick=()=>{playChoiceClick();f()};C.append(b)})},add=x=>{if(!s.clues.includes(x))s.clues.push(x);save()};
 const systemCopy={
-  '毒舌':{
-    binding:n=>'绑定对象：'+n+'。世界也没挑你，挺公平的。',
-    arrival:'落地成功。新闻社没有欢迎仪式，只有一张失踪者留下的夜班表。',
-    editorTask:'主任务：核对林越留下的四处资料。把他的烂摊子收好，别把自己也归档了。',
-    rule:'新规则来了。记住它，毕竟你没有第二条命可以拿来做阅读理解。',
-    complete:'四处资料已核对。地下档案室开门了——多么适合加班的地方。',
-    demoEnd:'试玩到此。恭喜，你暂时还没被写进明天的讣告。'
-  },
-  '温柔':{
-    binding:n=>'已为 '+n+' 系好投放带哦，嘻嘻。请不要把手伸出世界边界。',
-    arrival:'欢迎来到雾港日报的夜班。林越把桌子留给你了，也把没说完的话留给你了呢。',
-    editorTask:'请轻轻核对工作台上的四处资料呀。漏掉任何一处都没关系，系统会替你把后果记得很清楚。',
-    rule:'新的生存规则送达啦。照着做就好，乖一点总是比较省事的，嘻嘻。',
-    complete:'四处资料都整理好了。接下来请去地下档案室，把林越的未完成稿件送进去吧。',
-    demoEnd:'试玩暂告一段落。请带好卷宗，雾港会记得你来过。嘻嘻。'
-  },
-  '梗王':{
-    binding:n=>'玩家 '+n+' 已接入，世界匹配成功。不是弹窗广告，真·沉浸式副本，666。',
-    arrival:'加载完成：夜班编辑部。前辈失联、工位亮着，这剧情开场多少有点高能。',
-    editorTask:'主任务刷新：核对林越留下的四处资料。先别慌，线索不会跑——大概。',
-    rule:'规则更新！这题不考选择题，答错直接进入都市传说限定皮肤，OMG。',
-    complete:'四份资料打包成功。下一站地下档案室，副本难度疑似上调，请玩家做好表情管理。',
-    demoEnd:'试玩章节暂时收工。你还在线，系统也还在线，双赢，老铁。'
-  }
+  '毒舌':{binding:'世界也没挑你，挺公平的。',arrival:'新闻社没有欢迎仪式，只有一张失踪者留下的夜班表。',editorTask:'把他的烂摊子收好，别把自己也归档了。',rule:'记住它，毕竟你没有第二条命可以拿来做阅读理解。',complete:'地下档案室开门了——多么适合加班的地方。',demoEnd:'恭喜，你暂时还没被写进明天的讣告。'},
+  '温柔':{binding:'投放带已经系好咯，嘻嘻。请不要把手伸出世界边界。',arrival:'林越把桌子留给你了，也把没说完的话留给你了呢。',editorTask:'漏掉任何一处都没关系，系统会替你把后果记得很清楚。',rule:'照着做就好，乖一点总是比较省事的，嘻嘻。',complete:'请去地下档案室，把林越的未完成稿件送进去吧。',demoEnd:'请带好卷宗，雾港会记得你来过。嘻嘻。'},
+  '梗王':{binding:'不是弹窗广告，真·沉浸式副本，666。',arrival:'前辈失联、工位亮着，这剧情开场多少有点高能。',editorTask:'先别慌，线索不会跑——大概。',rule:'这题不考选择题，答错直接进入都市传说限定皮肤，OMG。',complete:'副本难度疑似上调，请玩家做好表情管理。',demoEnd:'你还在线，系统也还在线，双赢，老铁。'}
 };
-const resolveSystemCopy=(persona,kind)=>{const value=persona[kind];return typeof value==='function'?value(s.name||'访客'):value};
-const sys=(kind,extra='')=>{const persona=systemCopy[s.persona]||systemCopy['梗王'];return '<section class="system system-'+(s.persona||'梗王')+'"><div class="system__head">系统</div><p>'+resolveSystemCopy(persona,kind)+'</p>'+(extra?'<p class="system__data">'+extra+'</p>':'')+'</section>'};
-const systemPop=(kind,title,extra='',type='system')=>{const persona=systemCopy[s.persona]||systemCopy['梗王'];pop('【'+title+'】\n'+resolveSystemCopy(persona,kind)+(extra?'\n\n'+extra:''),type)};
+const systemFacts={binding:n=>'绑定对象：'+n+'。世界匹配成功。',arrival:'加载完成：夜班编辑部。',editorTask:'【主任务】核对林越留下的四处资料。',rule:'【规则更新】请阅读并遵守以下生存规则。',complete:'【任务完成】四处资料已核对。',demoEnd:'【试玩章节结束】当前试玩内容已完成。'};
+const resolveSystemCopy=(persona,kind)=>persona[kind]||'';
+const resolveSystemFact=kind=>{const value=systemFacts[kind]||'';return typeof value==='function'?value(s.name||'访客'):value};
+const sys=(kind,extra='')=>{const persona=systemCopy[s.persona]||systemCopy['梗王'];return '<section class="system system-'+(s.persona||'梗王')+'"><div class="system__head">系统</div><p class="system__fact">'+resolveSystemFact(kind)+'</p><p class="system__aside">'+resolveSystemCopy(persona,kind)+'</p>'+(extra?'<p class="system__data">'+extra+'</p>':'')+'</section>'};
+const systemPop=(kind,title,extra='',type='system')=>{const persona=systemCopy[s.persona]||systemCopy['梗王'];pop('<div class="system-popup__fact">【'+title+'】<br>'+resolveSystemFact(kind)+'</div><div class="system-popup__aside">'+resolveSystemCopy(persona,kind)+'</div>'+(extra?'<div class="system-popup__data">'+extra+'</div>':''),type)};
 function render(){S.classList.toggle('off',!s.powered);$('#power-button').classList.toggle('awaiting-power',!s.powered);if(!s.powered)return;let n=s.name||'访客';
 if(s.scene==='boot'){T.textContent='';B.innerHTML='<section class="boot-splash"><div class="boot-windows"><i></i><i></i><i></i><i></i></div><strong>Windows<sup>®</sup></strong><div class="boot-progress"><b></b></div><small id="boot-percent">0%</small></section>';C.innerHTML='';let p=0,loader=setInterval(()=>{if(s.scene!=='boot'){clearInterval(loader);return}p+=4;$('.boot-progress b').style.width=Math.min(p,100)+'%';$('#boot-percent').textContent=Math.min(p,100)+'%';if(p>=100){clearInterval(loader);setTimeout(()=>{if(s.scene==='boot'){B.innerHTML='<div class="snow"></div><p class="binding">人生系统正在接管终端</p>';btn([['接受绑定',()=>go('name')]])}},260)}},72);return}
 if(s.scene==='name'){T.textContent='绑定校验';B.innerHTML='<p class="question">请输入你的名字。</p><input id="a" autofocus>';btn([['确认',()=>{let v=$('#a').value.trim();if(v){s.name=v;go('persona')}}]]);return}
