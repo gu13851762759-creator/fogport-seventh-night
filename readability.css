@@ -1,0 +1,13 @@
+/* Reading mode: a cold paper terminal, inspired by an old newsroom monitor. */
+.screen{background:#e3e5df!important;color:#171b1c!important;box-shadow:inset 0 0 70px #77817b66,0 0 3px #000}
+.screen:after{background:repeating-linear-gradient(0deg,#53605b12 0 1px,transparent 1px 4px),radial-gradient(ellipse at center,transparent 43%,#27302c25 100%);mix-blend-mode:multiply}
+header{border-bottom-color:#7d8880!important;color:#172420!important}
+#scene-body{color:#17211e!important;text-shadow:none!important;font-weight:600}
+#scene-body .subtle,#scene-body .hint{color:#3e5149!important}
+#status-line{border-top-color:#7d8880!important;color:#405249!important}
+.system{background:#d3ddd4!important;color:#142019!important;border-color:#657b6b!important;text-shadow:none!important;box-shadow:4px 4px 0 #3b484133}
+.system b{color:#15291e!important}.system em{color:#243e30!important;border-bottom-color:#6f8878!important}
+.rule{background:#eee1d5!important;color:#2f201d!important;border-color:#9d735c!important;text-shadow:none!important}
+.quote{color:#27352f!important}.archive-ok{background:#c9dbc8!important;color:#18351e!important}
+.screen input{background:#f8faf3!important;color:#141b18!important}
+@media(max-width:650px){.screen{background:#e2e4df!important}.screen #scene-body{color:#18211e!important}}
