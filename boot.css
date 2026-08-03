@@ -1,0 +1,10 @@
+/* Dedicated power-on screen: kept separate from the story terminal. */
+.boot-splash{min-height:100%;display:grid;place-content:center;justify-items:center;gap:18px;padding:36px 14px;background:#000;color:#fff;text-align:center;font-family:Arial,sans-serif;text-shadow:none}
+.boot-windows{display:grid;grid-template-columns:repeat(2,clamp(65px,10vw,92px));grid-template-rows:repeat(2,clamp(48px,7vw,65px));gap:8px;transform:skewY(-7deg);filter:drop-shadow(4px 5px 0 #777)}
+.boot-windows i{display:block;box-shadow:inset 4px 4px #ffffff88,inset -5px -5px #00000035}
+.boot-windows i:nth-child(1){background:#f36b22}.boot-windows i:nth-child(2){background:#77b74a}.boot-windows i:nth-child(3){background:#6179cb}.boot-windows i:nth-child(4){background:#f2b32d}
+.boot-splash strong{font-size:clamp(42px,7vw,68px);font-weight:600;letter-spacing:-5px;line-height:1}.boot-splash sup{font-size:.28em;letter-spacing:0;vertical-align:top}.boot-progress{width:min(590px,78vw);height:26px;border:4px solid #f4f4f4;background:#000;padding:3px;box-shadow:0 0 0 1px #888}.boot-progress b{display:block;width:0;height:100%;background:#f4f4f4;transition:width .07s linear}.boot-splash small{font-family:"Courier New",monospace;color:#ddd;font-size:13px;letter-spacing:2px}
+/* Popups are classic light Windows dialogs. Never inherit the green terminal card skin. */
+.pixel-modal,.pixel-modal.modal-system,.pixel-modal.warning,.pixel-modal.error,.pixel-modal.archive{background:#d8d5c9!important;color:#141414!important;text-shadow:none!important}
+.pixel-modal #modal-copy,.pixel-modal.modal-system #modal-copy{color:#141414!important;text-shadow:none!important}.pixel-modal .pixel-title{background:linear-gradient(90deg,#061c87,#2371db)!important;color:#fff!important}.pixel-modal.error .pixel-title{background:linear-gradient(90deg,#7f0808,#d72c2c)!important}.pixel-modal.archive .pixel-title{background:linear-gradient(90deg,#075530,#20a967)!important}
+@media(max-width:650px){.boot-splash{gap:14px;padding:22px 10px}.boot-windows{gap:5px}.boot-progress{width:82vw;height:21px}.boot-splash strong{letter-spacing:-3px}.boot-splash small{font-size:11px}}
