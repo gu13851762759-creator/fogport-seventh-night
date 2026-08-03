@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>雾港第七夜</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<audio id="ambience" src="audio/fogport-ambience.mp3" loop></audio><audio id="click-sfx" src="audio/boot-click.wav"></audio><audio id="popup-sfx" src="audio/popup.wav"></audio>
+<main class="desk">
+  <div class="wall-stamp">雾港日报 · 夜班工作站 · 1998</div>
+  <section class="crt" aria-label="雾港日报夜班终端">
+    <div class="brand"><span>WUGANG DAILY</span><span>MONITOR 071</span></div>
+    <div class="screen">
+      <div class="window-bar"><span class="app-icon">▣</span><span>雾港日报 · 夜班稿件终端</span><span class="window-buttons">_ □ ×</span></div>
+      <header><span id="scene-title">正在连接人生系统……</span><button id="notebook-toggle" aria-label="打开调查卷宗"><span class="folder-icon" aria-hidden="true"></span><span>调查卷宗</span></button></header>
+      <section id="scene-body"></section><div id="choices"></div>
+      <footer id="status-line"><span>就绪</span><span>本地档案已连接</span><span>01:59</span></footer>
+    </div>
+    <div class="monitor-controls"><i></i><i></i><i></i><button id="power-button" aria-label="开启主机"></button><b></b></div>
+  </section>
+  <section class="computer-base"><div class="floppy"></div><div class="drive"></div><div class="vent"></div><div class="power">●</div></section>
+  <div class="keyboard" aria-label="复古键盘"><button id="rewind-button" aria-label="回溯至初始绑定"><span class="power-mark">⏻</span></button><div class="key-row function-row"><i>Esc</i><i>F1</i><i>F2</i><i>F3</i><i>F4</i><i>F5</i><i>F6</i><i>F7</i><i>F8</i><i>F9</i><i>F10</i><i>F11</i><i>F12</i></div><div class="key-row row-q"><i>Q</i><i>W</i><i>E</i><i>R</i><i>T</i><i>Y</i><i>U</i><i>I</i><i>O</i><i>P</i><i>[</i><i>]</i><i class="wide">↵</i></div><div class="key-row row-a"><i>A</i><i>S</i><i>D</i><i>F</i><i>G</i><i>H</i><i>J</i><i>K</i><i>L</i><i>;</i><i>'</i><i class="shift">⇧</i></div><div class="key-row row-z"><i>Z</i><i>X</i><i>C</i><i>V</i><i>B</i><i>N</i><i>M</i><i>,</i><i>.</i><i>/</i><i class="space">Space</i></div></div>
+  <div class="mouse"><span></span></div>
+  <aside id="notebook" class="hidden"><button id="notebook-close">×</button><div class="case-folder__tab">雾港日报</div><div class="case-folder__cover"><small>夜班调查档案 / 第 071 号</small><h2>案件卷宗</h2><p>FOGPORT · NIGHT DESK</p><div class="case-folder__window"><span>已归档物证</span><b id="case-count">00</b></div></div><div id="notebook-content"></div></aside>
+  <div id="system-modal" class="hidden"><section class="pixel-modal"><div class="pixel-title">人生系统 · 警告</div><div id="modal-copy"></div><div class="modal-actions"><button id="modal-ok">收到</button><button id="modal-cancel" class="hidden">取消</button></div></section></div>
+  <div id="evidence-capture" class="hidden" aria-hidden="true"><div class="capture-flash"></div><div class="evidence-photo"><div class="photo-marks">REC ●　071</div><div id="capture-subject" class="photo-subject"></div><div id="capture-label" class="photo-label"></div></div><p id="capture-status">咔擦 · 物证影像已固定</p><button id="capture-store">确认收纳</button></div>
+</main>
+<script src="game.js"></script>
+</body></html>
