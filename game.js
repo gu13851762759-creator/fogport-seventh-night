@@ -1,13 +1,14 @@
 const KEY='fogport-demo-v2',$=s=>document.querySelector(s),T=$('#scene-title'),B=$('#scene-body'),C=$('#choices'),S=$('.screen');
 let modalAction=()=>{};
 const playCue=type=>{const id=type==='error'?'#error-sfx':type==='archive'?'#correct-sfx':type==='system'?'#system-sfx':'#popup-sfx',audio=$(id);audio.currentTime=0;audio.play().catch(()=>{})};
+const playChoiceClick=()=>{const audio=$('#choice-sfx');audio.currentTime=0;audio.play().catch(()=>{})};
 const pop=(text,type='warning',onOk=()=>{})=>{playCue(type);$('.pixel-modal').className='pixel-modal '+type;$('#modal-copy').innerHTML='<span class="pixel-icon">'+(type==='error'?'✖':'⚠')+'</span>'+text.replace(/\n/g,'<br>');modalAction=onOk;$('#modal-ok').textContent='收到';$('#modal-cancel').classList.add('hidden');$('#system-modal').classList.remove('hidden')};
 let s=JSON.parse(localStorage.getItem(KEY)||'null')||{scene:'boot',powered:false,name:'',wish:'',persona:'冷静',clues:[],seen:[]};
 const data={note:['林越的便笺','校门口那个孩子……她一直在等。'],rewrite:['被淡化的报道','“港区小学女生意外身亡”被改成“雨夜安全提醒”。'],program:['撕坏的节目单','……满 / 邱圆'],boss:['总编的电话','“明早之前，别让那件事再上版面。”'],doll:['湿透的玩偶','衣领里夹着一片节目单。'],mark:['雨夜标记','一段无法阅读的涂鸦。'],photo:['被裁掉人物的合照','她和邱圆约好一起上台。']};
 const music=$('#ambience'),rainAudio=$('#rain');
 const fadeAudio=(audio,target)=>{clearInterval(audio._fogportFade);audio._fogportFade=setInterval(()=>{const next=audio.volume+(target-audio.volume)*.18;if(Math.abs(next-target)<.012){audio.volume=target;clearInterval(audio._fogportFade);return}audio.volume=next},80)};
 const setSoundscape=mode=>{const storm=mode==='storm';fadeAudio(music,storm?.08:.30);fadeAudio(rainAudio,storm?.62:.12);if(s.powered){music.play().catch(()=>{});rainAudio.play().catch(()=>{})}};
-const save=()=>localStorage.setItem(KEY,JSON.stringify(s)),go=x=>{s.scene=x;if(['chapter1','arrival','desk','rain'].includes(x))setSoundscape('storm');save();render()},btn=a=>{C.innerHTML='';a.forEach(([x,f])=>{let b=document.createElement('button');b.className='choice';b.textContent=x;b.onclick=f;C.append(b)})},add=x=>{if(!s.clues.includes(x))s.clues.push(x);save()};
+const save=()=>localStorage.setItem(KEY,JSON.stringify(s)),go=x=>{s.scene=x;if(['chapter1','arrival','desk','rain'].includes(x))setSoundscape('storm');save();render()},btn=a=>{C.innerHTML='';a.forEach(([x,f])=>{let b=document.createElement('button');b.className='choice';b.textContent=x;b.onclick=()=>{playChoiceClick();f()};C.append(b)})},add=x=>{if(!s.clues.includes(x))s.clues.push(x);save()};
 const systemCopy={
   '毒舌':{
     binding:n=>'绑定对象：'+n+'。世界也没挑你，挺公平的。',
