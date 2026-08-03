@@ -1,0 +1,10 @@
+/* Contrast audit: no pale copy is allowed on the light newsroom terminal. */
+.screen .question{color:#18211e!important;font-weight:800!important;text-shadow:none!important}
+.screen .subtle,.screen .hint,.screen .prop>i{color:#31483e!important;font-weight:700!important;text-shadow:none!important}
+.screen .chapter-card,.screen .chapter-card h1,.screen .chapter-card h2,.screen .chapter-card small{color:#18211e!important;text-shadow:none!important}
+.screen .pollution{color:#8b1717!important;text-shadow:none!important}.screen .fireworks{color:#0d315e!important;text-shadow:none!important}
+.screen .binding,.screen .bootline{color:#151d1a!important;text-shadow:none!important}
+.screen .quote{color:#1f332a!important}.screen mark{background:#f2ca62!important;color:#201600!important;font-weight:800!important}
+.screen input,.screen input::placeholder{color:#141b18!important;opacity:1!important;font-weight:700}.screen .story-card small{color:#2d4655!important}.screen .id-card__fields span{color:#343d3a!important}
+/* Dark prop cards remain dark only where they also use bright, high-contrast lettering. */
+.screen .door-gap{color:#fff8df!important;text-shadow:0 1px #000!important}.screen .rewrite-card .evidence-card__visual:after{color:#efffd9!important}
