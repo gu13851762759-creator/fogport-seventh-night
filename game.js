@@ -7,14 +7,29 @@
   const modal = $('#system-modal'), modalCopy = $('#modal-copy'), modalOk = $('#modal-ok'), modalCancel = $('#modal-cancel');
   const capture = $('#evidence-capture'), captureSubject = $('#capture-subject'), captureLabel = $('#capture-label'), captureStore = $('#capture-store');
   const audio = Object.fromEntries(['ambience','rain','click-sfx','choice-sfx','popup-sfx','correct-sfx','error-sfx','system-sfx','startup-sfx','rewind-sfx','chapter-sfx'].map(id => [id, $('#' + id)]));
-  let modalAction = null, modalCancelAction = null, captureItem = null, pollutionTimer = null;
+  let modalAction = null, modalCancelAction = null, captureItem = null, pollutionTimer = null, sceneToken = 0;
   const blank = () => ({ scene:'idle', powered:false, name:'', persona:'', pollution:null, submission:'', clues:[], marked:{}, deskDone:[] });
   let s;
   try { s = { ...blank(), ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch { s = blank(); }
   const save = () => localStorage.setItem(KEY, JSON.stringify(s));
   const play = (name, volume = 1) => { const a = audio[name]; if (!a) return; a.pause(); a.currentTime = 0; a.volume = volume; a.play().catch(() => {}); };
   const click = () => play('choice-sfx', .58);
-  const scene = (name, html, buttons = []) => { s.scene = name; save(); title.textContent = name === 'idle' ? '终端未启动' : '雾港日报 / 夜班编辑部'; body.innerHTML = html; choices.innerHTML = ''; buttons.forEach(({ text, fn, cls = '' }) => { const b = document.createElement('button'); b.className = cls; b.textContent = '＞ ' + text; b.addEventListener('click', () => { click(); fn(); }); choices.appendChild(b); }); };
+  const scene = (name, html, buttons = []) => {
+    const token = ++sceneToken;
+    s.scene = name; save(); title.textContent = name === 'idle' ? '终端未启动' : '雾港日报 / 夜班编辑部';
+    body.innerHTML = `<div class="staged-content">${html}</div>`; choices.innerHTML = '';
+    const renderButtons = () => { if (token !== sceneToken) return; buttons.forEach(({ text, fn, cls = '' }) => { const b = document.createElement('button'); b.className = cls; b.textContent = '＞ ' + text; b.addEventListener('click', () => { click(); fn(); }); choices.appendChild(b); }); };
+    const revealDeferred = () => { if (token !== sceneToken) return; body.querySelectorAll('.deferred-system').forEach(x => x.classList.add('is-visible')); setTimeout(renderButtons, body.querySelector('.deferred-system') ? 520 : 150); };
+    const lines = [...body.querySelectorAll('[data-type]')];
+    let index = 0;
+    const typeNext = () => {
+      if (token !== sceneToken) return;
+      if (index >= lines.length) { revealDeferred(); return; }
+      const node = lines[index++], text = node.textContent; node.textContent = ''; node.classList.add('typing-line'); let pos = 0;
+      const timer = setInterval(() => { if (token !== sceneToken) { clearInterval(timer); return; } node.textContent += text[pos++] || ''; if (pos > text.length) { clearInterval(timer); node.classList.remove('typing-line'); setTimeout(typeNext, 260); } }, 20);
+    };
+    if (lines.length) typeNext(); else setTimeout(revealDeferred, 120);
+  };
   const setSoundscape = (kind) => {
     if (kind === 'storm') { audio.ambience.volume = .08; audio.rain.volume = .62; }
     else { audio.ambience.volume = .28; audio.rain.volume = .13; }
@@ -41,19 +56,19 @@
   function powerOn() { if (s.powered) return; s.powered = true; save(); play('click-sfx', .65); play('startup-sfx', .58); setSoundscape('intro'); scene('boot', '<div class="boot-screen"><div><div class="winmark">▣</div><h1>Windows</h1><div class="loadbar"><b></b></div><p>正在启动雾港日报终端……</p></div></div>'); setTimeout(bindingStart, 2700); }
   $('#power-button').onclick = powerOn;
   $('#rewind-button').onclick = () => { if (!s.powered) return; showModal('<p><strong>是否回溯至最初绑定？</strong></p><p>本机进度与已归档线索将被清空。</p>', () => { play('rewind-sfx', .7); $('#glitch-overlay').classList.add('active'); localStorage.removeItem(KEY); setTimeout(() => location.reload(), 900); }, null, '人生系统 · 回溯确认', '确认回溯'); };
-  function bindingStart() { scene('bind', `<div class="intro-copy"><h2>人生系统正在接管终端</h2><p>正在检测可绑定对象……</p><p class="small-muted">请确认是否接受绑定。</p></div>`, [{text:'接受绑定', fn:nameInput}]); }
-  function nameInput() { scene('name', `<div class="intro-copy"><h2>请输入你的名字。</h2><p>该名称将用于本次试炼世界的临时身份记录。</p><div class="bind-form"><input id="name-input" maxlength="12" autocomplete="off" placeholder="输入姓名或昵称"></div></div>`, [{text:'确认', fn:() => { const n = $('#name-input').value.trim(); if (!n) { play('error-sfx',.65); $('#name-input').focus(); return; } s.name = n; save(); personaPick(); }}]); setTimeout(() => $('#name-input')?.focus(), 50); }
-  function personaPick() { scene('persona', `<div class="intro-copy"><h2>请选择与你同行的系统人格。</h2><p>它会影响系统的说话方式，不会影响结局。</p><div class="persona-grid"><button class="persona-card" data-p="毒舌"><h3>毒舌</h3><p>语言犀利，擅长反讽与挑出漏洞。</p></button><button class="persona-card" data-p="温柔"><h3>温柔</h3><p>永远笑眯眯地说话；话里有没有别的意思，慢慢听。</p></button><button class="persona-card" data-p="梗王"><h3>梗王</h3><p>混迹互联网十年的冲浪选手；不保证每个梗都在你的年代。</p></button></div></div>`); document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{ click(); s.persona=b.dataset.p; save(); pollutionDraw(); }); }
-  function pollutionDraw() { scene('pollution', `<div class="intro-copy pollution-box"><h2>初始污染度抽取器已就绪</h2><p>该数值仅记录你进入世界时的异常适配度。</p><div id="pollution-number" class="pollution-number">--%</div><p id="pollution-state" class="small-muted">等待抽取。</p></div>`, [{text:'开始抽取', fn: startPollution}]); }
+  function bindingStart() { scene('bind', `<div class="intro-copy"><h2 data-type>人生系统正在接管终端</h2><p data-type>正在检测可绑定对象……</p><p class="small-muted scan-pulse" data-type>请确认是否接受绑定。</p></div>`, [{text:'接受绑定', fn:nameInput}]); }
+  function nameInput() { scene('name', `<div class="intro-copy"><h2 data-type>请输入你的名字。</h2><p data-type>该名称将用于本次试炼世界的临时身份记录。</p><div class="bind-form"><input id="name-input" maxlength="12" autocomplete="off" placeholder="输入姓名或昵称"></div></div>`, [{text:'确认', fn:() => { const n = $('#name-input').value.trim(); if (!n) { play('error-sfx',.65); $('#name-input').focus(); return; } s.name = n; save(); personaPick(); }}]); setTimeout(() => $('#name-input')?.focus(), 1300); }
+  function personaPick() { scene('persona', `<div class="intro-copy"><h2 data-type>请选择与你同行的系统人格。</h2><p data-type>它会影响系统的说话方式，不会影响结局。</p><div class="persona-grid deferred-system"><button class="persona-card" data-p="毒舌"><h3>毒舌</h3><p>语言犀利，擅长反讽与挑出漏洞。</p></button><button class="persona-card" data-p="温柔"><h3>温柔</h3><p>永远笑眯眯地说话；话里有没有别的意思，慢慢听。</p></button><button class="persona-card" data-p="梗王"><h3>梗王</h3><p>混迹互联网十年的冲浪选手；不保证每个梗都在你的年代。</p></button></div></div>`); document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{ click(); s.persona=b.dataset.p; save(); pollutionDraw(); }); }
+  function pollutionDraw() { scene('pollution', `<div class="intro-copy pollution-box"><h2 data-type>初始污染度抽取器已就绪</h2><p data-type>该数值仅记录你进入世界时的异常适配度。</p><div id="pollution-number" class="pollution-number">--%</div><p id="pollution-state" class="small-muted">等待抽取。</p></div>`, [{text:'开始抽取', fn: startPollution}]); }
   function startPollution() { const n = $('#pollution-number'), state = $('#pollution-state'); if (!n || pollutionTimer) return; play('system-sfx',.6); let ticks = 0; pollutionTimer = setInterval(()=>{ n.textContent = (Math.floor(Math.random()*61)+20) + '%'; ticks++; if(ticks >= 22){ clearInterval(pollutionTimer); pollutionTimer = null; s.pollution = Math.floor(Math.random()*61)+20; n.textContent = s.pollution + '%'; state.textContent = '抽取完成。该数值已写入本机记录。'; save(); choices.innerHTML = ''; const b=document.createElement('button'); b.textContent='＞ 确认数值'; b.onclick=()=>{click(); loader();}; choices.appendChild(b); }},85); }
   function loader(){ scene('loader', '<div class="boot-screen loading"><div><h1>正在建立试炼连接</h1><div class="loadbar"><b></b></div><p>人格参数已写入。请保持终端连接。</p></div></div>'); setTimeout(bindingSuccess,2600); }
   function bindingSuccess(){ const fact = `✦【绑定成功】<br>绑定对象：${s.name}<br>世界匹配成功。`; const data = `试炼世界：《雾港第七夜》<br>初始污染度：${s.pollution}%`; showModal(`<span class="system-popup__fact">${fact}</span><span class="system-popup__aside">${aside()}</span><span class="system-popup__data">${data}</span>`, projection, null, '人生系统 · 绑定成功'); }
   function projection(){ play('chapter-sfx',.58); scene('projection','<div class="chapter-card"><h1>正在投入试炼世界……</h1><p>请保持终端连接</p></div>'); setTimeout(identity,1700); }
-  function identity(){ scene('identity', `<div class="intro-copy"><div class="id-card"><div class="id-card__top">雾港日报　夜班通行证</div><dl class="id-card__grid"><dt>姓名</dt><dd>${s.name}</dd><dt>职业</dt><dd>夜班实习记者</dd><dt>报社</dt><dd>雾港日报</dd><dt>班次</dt><dd>临时顶替</dd><dt>状态</dt><dd class="danger">代班对象失联</dd></dl><small>WG-071 / LOCAL</small></div></div>`, [{text:'确认身份',fn:briefing}]); }
-  function briefing(){ scene('briefing', `<div class="intro-copy"><h2>午夜交接</h2><p>你的前辈，<strong>林越</strong>。</p><p>雾港日报夜班记者。</p><p>十二小时前，他在追查一篇被反复撤下的稿件后失联。</p><p>他的工位还亮着。</p></div>`, [{text:'继续',fn:rewindGuide}]); }
+  function identity(){ scene('identity', `<div class="intro-copy"><div class="id-card"><div class="id-card__top">雾港日报　夜班通行证</div><div class="id-card__identity"><img src="assets/player-avatar.png" alt="临时记者头像"><dl class="id-card__grid"><dt>姓名</dt><dd>${s.name}</dd><dt>职业</dt><dd>夜班实习记者</dd><dt>报社</dt><dd>雾港日报</dd><dt>班次</dt><dd>临时顶替</dd><dt>状态</dt><dd class="danger">代班对象失联</dd></dl></div><small>WG-071 / LOCAL</small></div></div>`, [{text:'确认身份',fn:briefing}]); }
+  function briefing(){ scene('briefing', `<div class="intro-copy book-copy"><h2 data-type>午夜交接</h2><p data-type>你的前辈，林越。</p><p data-type>雾港日报夜班记者。</p><p data-type>十二小时前，他在追查一篇被反复撤下的稿件后失联。</p><p data-type>他的工位还亮着。</p></div>`, [{text:'继续',fn:rewindGuide}]); }
   function rewindGuide(){ $('#rewind-button').classList.add('guided'); scene('rewind-guide', `<div class="intro-copy">${systemBlock('【回溯键】','当你想清空本机进度、重新体验时，可按下键盘右上角的回溯键。<br>开机键只在游戏开始前有效；进入世界后不会再响应。')}</div>`, [{text:'我明白了',fn:chapterStart}]); }
   function chapterStart(){ $('#rewind-button').classList.remove('guided'); setSoundscape('storm'); play('chapter-sfx',.58); scene('chapter-card','<div class="chapter-card"><h1>第一章</h1><p>交接前的灯</p><p class="small-muted">雨声载入中……</p></div>',[{text:'开始夜班',fn:environment}]); }
-  function environment(){ scene('environment', `<div class="chapter-copy"><p>窗外的雨斜着打在玻璃上，霓虹被雨水揉成模糊的色块。远处港口有一声闷长的汽笛。</p><p>整层编辑部只亮着一盏工位灯。林越的座位没有人，电脑却仍在运行；桌上的答录机指示灯规律闪烁。</p>${systemBlock('加载完成：夜班编辑部。','前辈失联、工位亮着。今晚的交接看起来并不安静。')}</div>`,[{text:'走向林越的工位',fn:desktop}]); }
+  function environment(){ scene('environment', `<div class="chapter-copy book-copy"><p data-type>窗外的雨斜着打在玻璃上，霓虹被雨水揉成模糊的色块。远处港口有一声闷长的汽笛。</p><p data-type>整层编辑部只亮着一盏工位灯。林越的座位没有人，电脑却仍在运行；桌上的答录机指示灯规律闪烁。</p><div class="deferred-system">${systemBlock('加载完成：夜班编辑部。','前辈失联、工位亮着。今晚的交接看起来并不安静。')}</div></div>`,[{text:'走向林越的工位',fn:desktop}]); }
   function desktop(){ scene('desktop', `<div class="desktop-scene"><div class="guide-tip">林越留下的最终稿似乎尚未提交。<br>点击文件，完成夜班交接。</div><div class="desktop-icons"><button class="desktop-icon"><b></b>我的文档</button><button class="desktop-icon"><b></b>港务浏览器</button><button class="desktop-icon"><b></b>雾港日报内网</button><button class="desktop-icon recycle"><b></b>回收站</button></div><button id="final-doc" class="desktop-doc"><b>W</b>静湖公园女童不慎落水_最终稿.doc</button></div>`); $('#final-doc').onclick=()=>{click(); finalDraft(0);}; }
   const pages = [
     '<h2>《静湖公园女童不慎落水》</h2><p class="small-muted">最终稿 / 待提交</p><p>昨晚，雾港北郊静湖公园发生一起女童落水事件。</p><p>八岁女孩夏满在园内湖岸区域不慎落水，经抢救无效死亡。</p>',
@@ -64,7 +79,7 @@
   function submitConfirm(){ showModal('<p><strong>是否提交《静湖公园女童不慎落水》最终稿？</strong></p><p>提交后将进入印刷流程。</p>',()=>autoClose(),()=>{s.submission='暂不提交';save(); deferPrompt();},'人生系统 · 提交确认','是，提交','否，返回'); }
   function autoClose(){ play('error-sfx',.62); scene('draft-blocked','<div class="word-window"><div class="word-window__bar">静湖公园女童不慎落水_最终稿.doc　_ □ ×</div><article class="word-page"><p>鼠标自行移向右上角。</p><p>咔哒。</p><p class="small-muted">文档窗口已关闭。</p></article></div>'); setTimeout(()=>showModal('<p><strong>当前稿件存在未核验记录。</strong></p><p>是否暂缓提交？</p>',()=>{s.submission='异常中止提交';save(); startCheck();},null,'人生系统 · 异常中止','是，暂缓提交'),700); }
   function deferPrompt(){ showModal('<p><strong>【夜班交接提示】</strong></p><p>你选择暂缓提交。</p><p>在提交前，是否进行一次工位交接核验？</p>',startCheck,()=>finalDraft(2),'人生系统 · 交接核验','开始核验','返回最终稿'); }
-  function startCheck(){ scene('check', `<div class="chapter-copy"><h2>雾港日报 · 档案权限</h2><p>地下二层旧档案室处于备用供电状态。</p><p>当前工位交接核验完成后，电梯与档案室权限将恢复。</p>${systemBlock('待核验物品：3 件','林越新闻残页、电脑修改记录、老式电话答录机。')}</div>`,[{text:'开始工位核验',fn:desk}]); }
+  function startCheck(){ scene('check', `<div class="chapter-copy book-copy"><h2 data-type>雾港日报 · 档案权限</h2><p data-type>地下二层旧档案室处于备用供电状态。</p><p data-type>当前工位交接核验完成后，电梯与档案室权限将恢复。</p><div class="deferred-system">${systemBlock('待核验物品：3 件','林越新闻残页、电脑修改记录、老式电话答录机。')}</div></div>`,[{text:'开始工位核验',fn:desk}]); }
   const prop = {
     paper:{name:'林越新闻残页',icon:'torn-paper',label:'林越的残页',detail:'被撕去标题的报道残页：夜钓、北侧临水步道、取厚外套。',lines:['“孩子说冷。”','“父亲返回停车处取厚外套。”','“北侧临水步道。”','“当晚原计划夜钓。”'],type:'note'},
     pc:{name:'林越的电脑 / 修改记录',icon:'old-pc',label:'终稿修订记录',detail:'地点与行动被泛化；原始终稿存档在地下二层社会新闻旧档案室。',lines:['昨日 20:14　“北侧临水步道” → “园内湖岸区域”','昨日 20:16　“父亲离开湖岸取外套” → “监护人短暂离开现场”'],type:'rewrite'},
