@@ -17,7 +17,17 @@
   const scene = (name, html, buttons = [], after = null) => {
     const token = ++sceneToken;
     s.scene = name; save(); title.textContent = name === 'idle' ? '终端未启动' : '雾港日报 / 夜班编辑部';
-    body.innerHTML = `<div class="staged-content">${html}</div>`; choices.innerHTML = '';
+    // Build off-screen first. Typed nodes are emptied before they ever enter the visible DOM,
+    // so the player never sees a one-frame flash of the complete paragraph.
+    const stage = document.createElement('div');
+    stage.className = 'staged-content';
+    stage.innerHTML = html;
+    stage.querySelectorAll('[data-type]').forEach(node => {
+      node.dataset.fullText = node.textContent;
+      node.textContent = '';
+      node.classList.add('typing-pending');
+    });
+    body.replaceChildren(stage); choices.innerHTML = '';
     const renderButtons = () => { if (token !== sceneToken) return; buttons.forEach(({ text, fn, cls = '' }) => addChoice(text, fn, cls)); };
     const revealDeferred = () => { if (token !== sceneToken) return; const hasDeferred = !!body.querySelector('.deferred-system'); body.querySelectorAll('.deferred-system').forEach(x => x.classList.add('is-visible')); setTimeout(() => after ? after(renderButtons) : renderButtons(), hasDeferred ? 520 : 240); };
     const lines = [...body.querySelectorAll('[data-type]')];
@@ -25,7 +35,7 @@
     const typeNext = () => {
       if (token !== sceneToken) return;
       if (index >= lines.length) { revealDeferred(); return; }
-      const node = lines[index++], text = node.textContent; node.textContent = ''; node.classList.add('typing-line'); let pos = 0;
+      const node = lines[index++], text = node.dataset.fullText || ''; node.classList.remove('typing-pending'); node.classList.add('typing-line'); let pos = 0;
       const timer = setInterval(() => { if (token !== sceneToken) { clearInterval(timer); return; } node.textContent += text[pos++] || ''; if (pos > text.length) { clearInterval(timer); node.classList.remove('typing-line'); setTimeout(typeNext, 420); } }, 52);
     };
     if (lines.length) typeNext(); else setTimeout(revealDeferred, 120);
