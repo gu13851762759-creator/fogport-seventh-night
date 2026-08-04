@@ -1,0 +1,42 @@
+/* Fixed geometry: story text may scroll inside the glass, never resize the CRT. */
+@media (min-width:1051px){
+  .crt{flex:0 0 auto!important;}
+  .screen{height:clamp(450px,64dvh,580px)!important;min-height:0!important;max-height:clamp(450px,64dvh,580px)!important;overflow:hidden!important;}
+  .screen #scene-body{min-height:0!important;}
+}
+
+/* Investigation dossier: a compact Explorer window rather than loose note blocks. */
+#notebook{
+  width:min(780px,calc(100vw - 32px))!important;
+  height:min(570px,calc(100dvh - 32px))!important;
+  min-height:0!important;
+  inset:50% auto auto 50%!important;
+  transform:translate(-50%,-50%)!important;
+  padding:0!important;
+  overflow:hidden!important;
+  background:#c6c6c6!important;
+  background-image:none!important;
+  border:3px outset #efefef!important;
+  box-shadow:10px 11px 0 #0009!important;
+  font-family:Tahoma,"Microsoft YaHei",sans-serif!important;
+}
+#notebook:before,.case-folder__tab,.case-folder__cover{display:none!important}
+#notebook-close{z-index:6!important;right:0!important;top:0!important;width:29px!important;height:28px!important;padding:0!important;background:#bd5149!important;color:#fff!important;border:2px outset #f3a39b!important;font-family:Tahoma,sans-serif!important}
+#notebook-content{height:100%!important;overflow:hidden!important}
+.explorer-window{height:100%;display:flex;flex-direction:column;background:#c6c6c6;color:#111;font-size:13px}
+.explorer-window__title{height:31px;box-sizing:border-box;padding:6px 38px 5px 10px;background:linear-gradient(90deg,#0b2b8e,#447ed1);color:#fff;font-weight:700;font-size:14px;letter-spacing:.5px}
+.explorer-toolbar{display:flex;justify-content:space-between;align-items:center;height:31px;padding:0 12px;border-bottom:2px solid #8b8b8b;background:#e8e8e8;color:#111;font-size:12px;word-spacing:8px}
+.explorer-main{display:flex;min-height:0;flex:1;border-top:1px solid #fff}
+.explorer-side{width:145px;flex:0 0 145px;display:flex;flex-direction:column;gap:13px;padding:17px 12px;background:linear-gradient(#e8e8e8,#bdbdbd);border-right:2px solid #8a8a8a;color:#242424}
+.explorer-side b{color:#173d84}.explorer-side span{font-size:12px}
+.explorer-files{flex:1;min-width:0;overflow:auto;padding:20px;background:#fff}
+.explorer-status{height:27px;box-sizing:border-box;padding:6px 10px;background:#e3e3e3;border-top:2px solid #888;color:#222;font-size:11px}
+.folder-grid{display:grid;grid-template-columns:repeat(3,minmax(112px,1fr));gap:20px 16px;align-content:start}
+.folder-tile{border:0;background:transparent;min-height:105px;padding:5px 3px;color:#111;text-align:center;font:inherit;cursor:pointer}
+.folder-tile:hover,.folder-tile:focus{outline:1px dotted #173d84;background:#dce8ff}.folder-tile.locked{filter:grayscale(1);opacity:.55;cursor:default}
+.folder-tile__icon{display:block;width:64px;height:47px;margin:0 auto 8px;position:relative;background:linear-gradient(145deg,#fff978 0 12%,#e6bf25 13% 100%);border:2px solid #856b00;border-radius:2px;box-shadow:4px 4px 0 #b2b2b2}
+.folder-tile__icon:before{content:"";position:absolute;left:5px;top:-8px;width:31px;height:14px;background:#ffe757;border:2px solid #856b00;border-bottom:0;border-radius:3px 3px 0 0}.folder-tile.locked .folder-tile__icon{background:#aaa;border-color:#666}.folder-tile.locked .folder-tile__icon:before{background:#aaa;border-color:#666}
+.folder-tile__name{display:block;line-height:1.45;font-size:12px;overflow-wrap:anywhere}
+.file-back{margin:0 0 16px;padding:5px 12px;background:#ddd;border:2px outset #eee;cursor:pointer;font:inherit}.file-row{display:flex;gap:12px;align-items:center;width:100%;padding:11px 8px;border:0;border-bottom:1px solid #ddd;background:#fff;text-align:left;cursor:pointer;font:inherit}.file-row:hover{background:#e6f0ff}.file-row__icon{font-size:28px;line-height:1}.file-row b{display:block;font-size:13px}.file-row small{display:block;margin-top:3px;color:#555;font-size:11px}
+.guided{position:relative;z-index:2;outline:3px solid #ffe047!important;box-shadow:0 0 0 5px #2b6bc688,0 0 20px #ffe047!important;animation:guide-pulse 1s steps(2,end) infinite}@keyframes guide-pulse{50%{outline-color:#fff4ab;box-shadow:0 0 0 5px #2b6bc655,0 0 29px #ffe047}}
+@media (max-width:650px){#notebook{width:calc(100vw - 14px)!important;height:calc(100dvh - 14px)!important}.explorer-window__title{height:28px;padding-top:5px;font-size:12px}.explorer-toolbar{height:28px;padding:0 8px;font-size:10px}.explorer-side{display:none}.explorer-files{padding:14px 10px}.folder-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 8px}.folder-tile{min-height:95px}.folder-tile__icon{transform:scale(.86);margin-bottom:2px}.folder-tile__name{font-size:11px}.explorer-status{font-size:9px}.file-row{padding:8px 3px}.file-row__icon{font-size:22px}}
