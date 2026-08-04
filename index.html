@@ -1,17 +1,24 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>雾港第七夜</title><link rel="stylesheet" href="styles.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>雾港第七夜</title>
+  <link rel="stylesheet" href="styles.css?v=20260805a">
+  <link rel="stylesheet" href="responsive.css?v=20260805a">
+  <link rel="stylesheet" href="compact.css?v=20260805a">
+  <link rel="stylesheet" href="effects.css?v=20260805a">
+  <link rel="stylesheet" href="boot.css?v=20260805a">
+  <link rel="stylesheet" href="readability.css?v=20260805a">
+  <link rel="stylesheet" href="capture-player.css?v=20260805a">
+  <link rel="stylesheet" href="crt-glass.css?v=20260805a">
+  <link rel="stylesheet" href="contrast-audit.css?v=20260805a">
+  <link rel="stylesheet" href="system-layout.css?v=20260805a">
+  <link rel="stylesheet" href="chapter-one.css?v=20260805a">
+</head>
 <body>
-<link rel="stylesheet" href="responsive.css">
-<link rel="stylesheet" href="compact.css">
-<link rel="stylesheet" href="effects.css">
-<link rel="stylesheet" href="boot.css">
-<link rel="stylesheet" href="readability.css">
-<link rel="stylesheet" href="capture-player.css">
-<link rel="stylesheet" href="crt-glass.css">
-<link rel="stylesheet" href="contrast-audit.css">
-<link rel="stylesheet" href="system-layout.css?v=20260804c">
-<audio id="ambience" src="audio/fogport-ambience.mp3" loop></audio><audio id="rain" src="audio/rain-loop.mp3" loop></audio><audio id="click-sfx" src="audio/boot-click.wav"></audio><audio id="choice-sfx" src="audio/mouse-click.wav"></audio><audio id="popup-sfx" src="audio/popup.wav"></audio><audio id="correct-sfx" src="audio/correct-ding.wav"></audio><audio id="error-sfx" src="audio/error-thunk.wav"></audio><audio id="system-sfx" src="audio/system-mail.wav"></audio><audio id="startup-sfx" src="audio/windows-startup.mp3"></audio><audio id="rewind-sfx" src="audio/rewind-glitch.mp3"></audio><audio id="chapter-sfx" src="audio/chapter-static.mp3"></audio>
+<audio id="ambience" src="audio/fogport-ambience.mp3" loop></audio><audio id="rain" src="audio/rain-loop.mp3" loop></audio>
+<audio id="click-sfx" src="audio/boot-click.wav"></audio><audio id="choice-sfx" src="audio/mouse-click.wav"></audio><audio id="popup-sfx" src="audio/popup.wav"></audio><audio id="correct-sfx" src="audio/correct-ding.wav"></audio><audio id="error-sfx" src="audio/error-thunk.wav"></audio><audio id="system-sfx" src="audio/system-mail.wav"></audio><audio id="startup-sfx" src="audio/windows-startup.mp3"></audio><audio id="rewind-sfx" src="audio/rewind-glitch.mp3"></audio><audio id="chapter-sfx" src="audio/chapter-static.mp3"></audio>
 <div id="glitch-overlay" aria-hidden="true"><b>ERROR / MEMORY REWIND</b><i>01011100　SIGNAL LOST　01011100</i></div>
 <main class="desk">
   <div class="wall-stamp">雾港日报 · 夜班工作站 · 1998</div>
@@ -19,7 +26,7 @@
     <div class="brand"><span>WUGANG DAILY</span><span>MONITOR 071</span></div>
     <div class="screen">
       <div class="window-bar"><span class="app-icon">▣</span><span>雾港日报 · 夜班稿件终端</span><span class="window-buttons">_ □ ×</span></div>
-      <header><span id="scene-title">正在连接人生系统……</span><button id="notebook-toggle" aria-label="打开调查卷宗"><span class="folder-icon" aria-hidden="true"></span><span>调查卷宗</span></button></header>
+      <header><span id="scene-title">终端未启动</span><button id="notebook-toggle" aria-label="打开调查卷宗"><span class="folder-icon" aria-hidden="true"></span><span>调查卷宗</span></button></header>
       <section id="scene-body"></section><div id="choices"></div>
       <footer id="status-line"><span>就绪</span><span>本地档案已连接</span><span>01:59</span></footer>
     </div>
@@ -30,7 +37,7 @@
   <div class="mouse"><span></span></div>
   <aside id="notebook" class="hidden"><button id="notebook-close">×</button><div class="case-folder__tab">雾港日报</div><div class="case-folder__cover"><small>夜班调查档案 / 第 071 号</small><h2>案件卷宗</h2><p>FOGPORT · NIGHT DESK</p><div class="case-folder__window"><span>已归档物证</span><b id="case-count">00</b></div></div><div id="notebook-content"></div></aside>
   <div id="system-modal" class="hidden"><section class="pixel-modal"><div class="pixel-title">人生系统 · 警告</div><div id="modal-copy"></div><div class="modal-actions"><button id="modal-ok">收到</button><button id="modal-cancel" class="hidden">取消</button></div></section></div>
-  <div id="evidence-capture" class="hidden" aria-hidden="true"><div class="capture-flash"></div><section class="capture-player" aria-label="物证显影播放器"><div class="capture-player__title"><span>◉　物证显影播放器</span><span>_　□　×</span></div><div class="capture-player__menu">文件　查看　播放　工具　帮助</div><div class="capture-player__stage"><div class="evidence-photo"><div class="photo-marks">REC ●　071</div><div id="capture-subject" class="photo-subject"></div><div id="capture-label" class="photo-label"></div></div></div><div class="capture-player__footer"><p id="capture-status">咔擦 · 物证影像已固定</p><div class="capture-player__controls"><i>▶</i><i>■</i><span></span><button id="capture-store">确认收纳</button></div></div></section></div>
+  <div id="evidence-capture" class="hidden" aria-hidden="true"><div class="capture-flash"></div><section class="capture-player"><div class="capture-player__title"><span>◉　物证显影播放器</span><span>_　□　×</span></div><div class="capture-player__menu">文件　查看　播放　工具　帮助</div><div class="capture-player__stage"><div class="evidence-photo"><div class="photo-marks">REC ●　071</div><div id="capture-subject" class="photo-subject"></div><div id="capture-label" class="photo-label"></div></div></div><div class="capture-player__footer"><p id="capture-status">咔擦 · 物证影像已固定</p><div class="capture-player__controls"><i>▶</i><i>■</i><span></span><button id="capture-store">确认收纳</button></div></div></section></div>
 </main>
-<script src="game.js?v=20260804c"></script>
+<script src="game.js?v=20260805a"></script>
 </body></html>
