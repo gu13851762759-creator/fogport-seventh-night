@@ -74,6 +74,11 @@
   function inspect(id){ const p=prop[id]; scene('inspect-'+id, `<div class="evidence-detail"><h3>${p.name}</h3><p>请自由标记你希望写入卷宗的信息。所有标记均作为材料归档，不判定对错。</p>${p.lines.map((l,i)=>`<button class="evidence-line" data-line="${i}">${l}</button>`).join('')} ${id==='pc'?'<div class="typed-note cursor">原始终稿存档：地下二层 / 社会新闻旧档案室。</div>':''}</div>`, [{text:'归档已标记信息',fn:()=>{ if(!s.deskDone.includes(id))s.deskDone.push(id); save(); captureEvidence({id:p.type==='note'?'clue-paper':p.type==='rewrite'?'clue-rewrite':'clue-phone',label:p.label,detail:p.detail,type:p.type,art:`<strong>${p.name}</strong>`}); }}]); document.querySelectorAll('.evidence-line').forEach(x=>x.onclick=()=>{click();x.classList.toggle('selected');}); }
   function restored(){ play('system-sfx',.65); scene('restored', `<div class="chapter-copy"><div class="access-restored"><p>答录机的红灯熄灭。走廊尽头的电梯指示灯逐级亮起。</p><b>B2 / SOCIAL ARCHIVE / ACCESS RESTORED</b><p>地下二层备用供电已恢复。电梯权限已解除。</p></div>${systemBlock('【任务更新】前往地下二层。', `找到林越存档的原始终稿。<br>当前稿件状态：${s.submission || '暂缓提交'}。`)}</div>`, [{text:'前往地下二层',fn:chapterEnd}]); }
   function chapterEnd(){ scene('chapter-end','<div class="section-complete"><h2>第一章完成</h2><p>原始终稿尚未开启。</p><p>第二章：被撤下的最终版</p></div>',[{text:'查看调查卷宗',fn:()=>{$('#notebook-toggle').click();}},{text:'结束试玩',fn:()=>showModal('<p>试玩章节已完成。</p><p>原始终稿将在下一章开启。</p>')}]); }
-  function resume(){ if(!s.powered){ scene('idle','<div class="boot-screen"><div><p>雾港日报夜班终端</p><p class="small-muted">请按下主机开机键</p></div></div>'); return; } setSoundscape(s.scene==='chapter-card'||s.scene==='environment'||s.scene==='desktop'||s.scene==='final-draft'||s.scene==='desk'||s.scene==='restored'?'storm':'intro'); if(s.scene==='idle'||s.scene==='boot') bindingStart(); else { s=blank(); save(); bindingStart(); } }
+  function resume(){
+    if(!s.powered){ scene('idle','<div class="boot-screen"><div><p>雾港日报夜班终端</p><p class="small-muted">请按下主机开机键</p></div></div>'); return; }
+    setSoundscape(['chapter-card','environment','desktop','final-draft','desk','restored','chapter-end'].includes(s.scene)?'storm':'intro');
+    const restore = { bind:bindingStart,name:nameInput,persona:personaPick,pollution:pollutionDraw,loader:loader,identity:identity,briefing:briefing,'rewind-guide':rewindGuide,'chapter-card':chapterStart,environment:environment,desktop:desktop,'final-draft':()=>finalDraft(2),check:startCheck,desk:desk,restored:restored,'chapter-end':chapterEnd };
+    (restore[s.scene] || bindingStart)();
+  }
   renderNotebook(); resume();
 })();
